@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMapConfig      
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"      
+	"http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<!-- 这个配置文件推荐命名SqlMapConfig.xml -->
+	<!-- 属性配置文件 ,路径相对于src,而不是该配置文件的路径-->
+	<properties resource="mysql.properties" />
+
+	<!--
+		定义iBATIS自身应用信息
+		lazyLoadingEnabled:指定当 存在相关联的已映射语句时,是否使用延迟加载,默认true
+		cacheModelsEnabled:数据告诉缓存,基于近期使用过的数据往往很快又会被用到的假设,将近期使用
+			过的数据保存在内存中
+		enhancementEnabled:指定是否使用cglib中那些已优化的类来提高延迟加载的性能
+		useStatementNamespace:当引用已映射语句时,是否需要使用限定名(qualified name)(使用命名空间),
+			默认false	 
+	-->
+	<settings cacheModelsEnabled="true" enhancementEnabled="true"
+		lazyLoadingEnabled="true" maxRequests="200" maxSessions="100"
+		maxTransactions="20" useStatementNamespaces="true" />
+	
+	<!-- 配置事务管理器 -->
+	<transactionManager type="JDBC">
+		<dataSource type="SIMPLE">
+			<property name="JDBC.Driver" value="${driverClassName}"/>
+			<property name="JDBC.ConnectionURL" value="${url}"/>
+			<property name="JDBC.Username" value="${username}"/>
+			<property name="JDBC.Password" value="${password}"/>
+		</dataSource>
+	</transactionManager>
+	
+	<!-- <sqlMap resource="mapper/${dbType}/*.xml" /> --> 
+	<sqlMap resource="mapper/Employee.xml" />
+</sqlMapConfig>
+
+

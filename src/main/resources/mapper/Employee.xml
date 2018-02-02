@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Employee">
+	<insert id="insert" parameterClass="com.zbatis.entity.Employee">
+		insert into EMPLOYEE(first_name, last_name, salary)
+		values
+		(#firstName#, #lastName#, #salary#)
+		<!--
+			查询插入的主键id 
+			若表用IDENTITY，AUTO_INCREMENT或串行列或已定义的SEQUENCE/GENERATOR，
+			 可以使用<selectKey>元素在的<insert>语句中使用或返回数据库生成的值。
+		 -->
+		<selectKey resultClass="int" keyProperty="id">
+			select
+			last_insert_id() as id
+		</selectKey>
+	</insert>
+
+	<select id="getAll" resultClass="com.zbatis.entity.Employee">
+		SELECT * FROM EMPLOYEE
+	</select>
+
+	<select id="getAll2" resultClass="com.zbatis.entity.Employee">
+		SELECT
+		first_name firstName,
+		last_name lastName,
+		salary,
+		id
+		FROM EMPLOYEE
+	</select>
+
+	<update id="update" parameterClass="com.zbatis.entity.Employee">
+		UPDATE EMPLOYEE
+		SET first_name
+		= #firstName#
+		WHERE id = #id#
+	</update>
+
+	<delete id="delete" parameterClass="int">
+		DELETE FROM EMPLOYEE
+		WHERE id
+		= #id#
+	</delete>
+
+	<!-- 
+		resultMap的元素是在iBATIS的最重要和最强大的元素。 您可以通过使用iBATIS的结果映射减少高达90％的JDBC编码， 
+		在某些情况下，可以让你做JDBC不支持的事情。 ResultMaps的设计是这样的简单语句不需要明确的结果映射， 
+		以及更复杂的报表要求不超过绝对必要说明的关系。 
+	-->
+	<!-- Using ResultMap -->
+	<resultMap id="result" class="com.zbatis.entity.Employee">
+		<result property="id" column="id" />
+		<result property="firstName" column="first_name" />
+		<result property="lastName" column="last_name" />
+		<result property="salary" column="salary" />
+	</resultMap>
+	
+	<select id="useResultMap" resultMap="result">
+		SELECT * FROM EMPLOYEE
+		WHERE
+		id=#id#
+	</select>
+	
+	<!-- 使用parameterMap -->
+	<parameterMap class="java.util.Map" id="paraMap">
+		<parameter property="firstName"/>
+		<parameter property="lastName"/>
+		<parameter property="salary"/>
+	</parameterMap>
+	
+	<insert id="useMapInsert" parameterMap="paraMap">
+		insert into EMPLOYEE(first_name, last_name, salary)
+		values
+		(?, ?, ?)
+	</insert>
+	
+	<!-- 不使用parameterMap,但参数传入map -->
+	<insert id="mapInsert" parameterClass="java.util.Map">
+		insert into EMPLOYEE(first_name, last_name, salary)
+		values
+		(#firstName#, #lastName#,#salary#)
+	</insert>
+
+	<!-- 动态sql ,使用人resultMap和动态sql-->
+	<select id="findByID" parameterClass="com.zbatis.entity.Employee"
+		resultMap="result">
+		SELECT * FROM EMPLOYEE
+		<dynamic prepend="WHERE ">
+			<!-- 若使用property属性,则传入的参数一定是一个包含id属性的对象啊 -->
+			<isNull property="id">
+				id IS NULL
+			</isNull>
+			<isNotNull property="id">
+				id = #id#
+			</isNotNull>
+		</dynamic>
+	</select>
+
+	<select id="findByID2" resultClass="com.zbatis.entity.Employee"
+		resultMap="result">
+		SELECT * FROM EMPLOYEE
+		<dynamic prepend="WHERE ">
+			<isNotEmpty prepend="AND" property="id">
+				id = #id#
+			</isNotEmpty>
+			<isNotEmpty prepend="OR" property="firstName">
+				first_name = #firstName#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<!-- if语句 -->
+	<select id="findEmpByName" parameterClass="com.zbatis.entity.Employee"
+		resultMap="result">
+		SELECT * FROM EMPLOYEE
+		WHERE 1=1
+	</select>
+	
+</sqlMap>

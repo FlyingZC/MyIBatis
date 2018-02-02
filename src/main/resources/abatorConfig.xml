@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE abatorConfiguration PUBLIC "-//Apache Software Foundation//DTD Abator for iBATIS Configuration 1.0//EN" "http://ibatis.apache.org/dtd/abator-config_1_0.dtd" >
+<abatorConfiguration>
+	<!--在数据库表存在时,配置完该文件后右击abatorConfig.xml，执行Generate iBAIS Aritifacts.自动生成实体,SQL以及DAOIMP-->
+	<abatorContext>
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://localhost:3306/db_mybatis" userId="root"
+			password="1262">
+			<classPathEntry location="G:/MyMavenRepository/mysql/mysql-connector-java/5.1.10/mysql-connector-java-5.1.10.jar" />
+		</jdbcConnection>
+		
+		<!--生成实体类的路径-->
+		<javaModelGenerator targetPackage="com.zbatis.entity"
+			targetProject="MyIBatis" />
+		<!--生成sqlMap映射文件的路径-->	
+		<sqlMapGenerator targetPackage="com.zbatis.dao.impl"
+			targetProject="MyIBatis" />
+			<!--生成dao和daoImpl的路径-->
+		<daoGenerator targetPackage="com.zbatis.dao" targetProject="MyIBatis"
+			type="spring" />
+		<!--tableName:数据库表名,domainObjectName:实体类名-->
+		<table tableName="student" domainObjectName="Student">
+			<generatedKey column="ID" identity="true"
+				sqlStatement="select last_insert_id() as cardId" />
+			<columnOverride column="NAME" property="name"
+				javaType="java.lang.String" jdbcType="VARCHAR" />
+			<columnOverride column="sal" property="sal"
+				javaType="java.lang.Double" jdbcType="double" />
+			<columnOverride column="cid" property="cid"
+				javaType="java.lang.Integer" jdbcType="int" />
+			<columnOverride column="gid" property="gid"
+				javaType="java.lang.Integer" jdbcType="int" />
+		</table>
+
+	</abatorContext>
+</abatorConfiguration>
